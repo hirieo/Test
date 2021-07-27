@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+    superset:
+        build: superset
+        ports:
+            - '8080:8088'
+        depends_on:
+            - cockroachdb
+        environment:
+            - DATABASE_DIALECT=cockroach
+            - POSTGRES_DB=superset
+            - POSTGRES_USER=superset_user
+            - POSTGRES_PASSWORD=
+            - DATABASE_HOST=cockroachdb
+            - DATABASE_PORT=26257
+            - SUPERSET_ENV=development
+        volumes:
+            - ./superset_config.py:/app/pythonpath/superset_config.py
+    cockroachdb:
+        image: cockroachdb/cockroach:v21.1.6
+        #ports:
+        #    - '26257:26257'
+        #    - '8081:8080'
+        command: start-single-node --insecure
+        volumes:
+            - ./cockroachdb-data:/cockroach/cockroach-data
